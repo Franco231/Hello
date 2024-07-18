@@ -14,7 +14,7 @@ const BOWL = "left_1";
 const WEIGH_BUTTON = "weigh";
 const RESET_BUTTON = "reset";
 
-const foundLesserGold = (id) => `coin_${id}`;
+const foundFakeGold = (id) => `coin_${id}`;
 
 const clickWeight = () => {
   cy.el(WEIGH_BUTTON).click();
@@ -40,33 +40,33 @@ const clearBowls = () => {
   });
 };
 
-const filterLesserGold = (gold1, gold2, gold3) => {
+const filterFakeGold = (gold1, gold2, gold3) => {
   cy.el(getLeftSideBowl(gold1)).click().type(gold1);
   cy.el(getRightSideBowl(gold2)).click().type(gold2);
   clickWeight();
   cy.get('[class="result"]').then((el) => {
     let result = el.text().slice(-1);
     if (result === "=") {
-      cy.el(foundLesserGold(gold3)).click();
+      cy.el(foundFakeGold(gold3)).click();
     } else if (result === ">") {
-      cy.el(foundLesserGold(gold2)).click();
+      cy.el(foundFakeGold(gold2)).click();
     } else {
-      cy.el(foundLesserGold(gold1)).click();
+      cy.el(foundFakeGold(gold1)).click();
     }
   });
 };
 
-const findLessGold = () => {
+const findFakeGold = () => {
   splitFirstGroup();
   cy.get('[class="result"]').then((el) => {
     let text = el.text().slice(-1);
     clearBowls();
     if (text === "=") {
-      filterLesserGold(6, 7, 8);
+      filterFakeGold(6, 7, 8);
     } else if (text === "<") {
-      filterLesserGold(1, 2, 3);
+      filterFakeGold(0, 1, 2);
     } else {
-      filterLesserGold(4, 5, 6);
+      filterFakeGold(3, 4, 5);
     }
   });
 };
@@ -76,11 +76,11 @@ describe("Fetch Coding Exercise ", () => {
     cy.visit("http://sdetchallenge.fetch.com");
   });
 
-  it("find gold that weight less", () => {
+  it("find gold that is fake", () => {
     cy.el(WEIGH_BUTTON).click();
     cy.el(RESET_BUTTON).eq(1).click();
 
-    findLessGold();
+    findFakeGold();
     const stub = cy.stub();
     cy.on("window:alert", stub);
     cy.get('[class="result"]').then(() => {
